@@ -248,6 +248,7 @@ class QuickSort implements SortAlgorithm {
 public class Main {
 
     private static final int MAX_TEST_SECTIONS = 5;
+    private static final int TEST_RUNS = 5;
 
     public static void testSortAlgorithm(SortAlgorithm algorithm, String algorithmName, FileWriter csvWriter) throws IOException {
         int[] sizes = {100, 500, 1000, 5000, 20000, 50000/*, 100000, 500000*/};
@@ -267,32 +268,31 @@ public class Main {
 
         for (int size : sizes) {
             for (String order : orders) {
-                int[] array = generateArray(size, order, seed);
-                long startTime = System.nanoTime();
-                algorithm.sort(array);
-                long endTime = System.nanoTime();
-                double duration = (endTime - startTime) / 1_000_000.0;
+                double totalDuration = 0;
+                int totalSwaps = 0;
+                int totalComparisons = 0;
 
-                csvWriter.append(String.format("%s,%d,%s,%.3f,%d,%d\n", algorithmName, size, order, duration, algorithm.getSwapCount(), algorithm.getComparisonCount()));
-                System.out.printf("%-" + maxAlgorithmNameLength + "s | %-" + maxSizeLength + "d | %-" + maxOrderLength + "s | %-" + maxDurationLength + ".3f%n",
-                        algorithmName, size, order, duration);
+                for (int run = 0; run < TEST_RUNS; run++) {
+                    int[] array = generateArray(size, order, seed + run);
+                    long startTime = System.nanoTime();
+                    algorithm.sort(array);
+                    long endTime = System.nanoTime();
+                    totalDuration += (endTime - startTime) / 1_000_000.0;
+                    totalSwaps += algorithm.getSwapCount();
+                    totalComparisons += algorithm.getComparisonCount();
+                }
+
+                double avgDuration = totalDuration / TEST_RUNS;
+                int avgSwaps = totalSwaps / TEST_RUNS;
+                int avgComparisons = totalComparisons / TEST_RUNS;
+
+                csvWriter.append(String.format("%s,%d,%s,%.3f,%d,%d\n", algorithmName, size, order, avgDuration, avgSwaps, avgComparisons));
+                System.out.printf("%-" + maxAlgorithmNameLength + "s | %-" + maxSizeLength + "d | %-" + maxOrderLength + "s | %-" + maxDurationLength + ".3f | %d | %d%n",
+                        algorithmName, size, order, avgDuration, avgSwaps, avgComparisons);
             }
         }
         System.out.println("\n\n");
     }
-
-    /*public static void main(String[] args) {
-        try (FileWriter csvWriter = new FileWriter("sort_results.csv")) {
-            csvWriter.append("Algorithm,Size,Order,Time (ms)\n");
-            testSortAlgorithm(new InsertionSort(), "InsertionSort", csvWriter);
-            testSortAlgorithm(new SelectionSort(), "SelectionSort", csvWriter);
-            testSortAlgorithm(new MergeSort(), "MergeSort", csvWriter);
-            testSortAlgorithm(new BubbleSort(), "BubbleSort", csvWriter);
-            testSortAlgorithm(new QuickSort(), "QuickSort", csvWriter);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     public static void main(String[] args) {
         try {
@@ -329,13 +329,11 @@ public class Main {
             }
         } else if (order.equals("ascending")) {
             for (int i = 0; i < size; i++) {
-            array[i] = i + 1;
-        }
+                array[i] = i + 1;
+            }
         } else if (order.equals("descending")) {
-            for (int i = 0; i < size / 2; i++) {
-                int temp = array[i];
-                array[i] = array[size - i - 1];
-                array[size - i - 1] = temp;
+            for (int i = 0; i < size; i++) {
+                array[i] = size - i;
             }
         }
         return array;
