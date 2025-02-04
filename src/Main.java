@@ -262,7 +262,9 @@ public class Main {
         int maxDurationLength = Arrays.stream(new String[]{"Time (ms)", "10000000.000"}).mapToInt(String::length).max().orElse(0);
 
         // Print the header
-        System.out.printf("%-" + maxAlgorithmNameLength + "s | %-" + maxSizeLength + "s | %-" + maxOrderLength + "s | %-" + maxDurationLength + "s | Swaps | Comparisons%n",
+        /*System.out.printf("%-" + maxAlgorithmNameLength + "s | %-" + maxSizeLength + "s | %-" + maxOrderLength + "s | %-" + maxDurationLength + "s | Swaps | Comparisons%n",
+                "Algorithm", "Size", "Order", "Time (ms)");*/
+        System.out.printf("%-" + maxAlgorithmNameLength + "s | %-" + maxSizeLength + "s | %-" + maxOrderLength + "s | %-" + maxDurationLength + "s%n",
                 "Algorithm", "Size", "Order", "Time (ms)");
         System.out.println("-".repeat(maxAlgorithmNameLength + maxSizeLength + maxOrderLength + maxDurationLength + 20));
 
@@ -286,9 +288,12 @@ public class Main {
                 int avgSwaps = totalSwaps / TEST_RUNS;
                 int avgComparisons = totalComparisons / TEST_RUNS;
 
-                csvWriter.append(String.format("%s,%d,%s,%.3f,%d,%d\n", algorithmName, size, order, avgDuration, avgSwaps, avgComparisons));
+                /*csvWriter.append(String.format("%s,%d,%s,%.3f,%d,%d\n", algorithmName, size, order, avgDuration, avgSwaps, avgComparisons));
                 System.out.printf("%-" + maxAlgorithmNameLength + "s | %-" + maxSizeLength + "d | %-" + maxOrderLength + "s | %-" + maxDurationLength + ".3f | %d | %d%n",
-                        algorithmName, size, order, avgDuration, avgSwaps, avgComparisons);
+                        algorithmName, size, order, avgDuration, avgSwaps, avgComparisons);*/
+                csvWriter.append(String.format("%s,%d,%s,%.3f\n", algorithmName, size, order, avgDuration));
+                System.out.printf("%-" + maxAlgorithmNameLength + "s | %-" + maxSizeLength + "d | %-" + maxOrderLength + "s | %-" + maxDurationLength + ".3f%n",
+                        algorithmName, size, order, avgDuration);
             }
         }
         System.out.println("\n\n");
@@ -301,7 +306,8 @@ public class Main {
 
             try (FileWriter csvWriter = new FileWriter(csvFile, append)) {
                 if (!append) {
-                    csvWriter.write("Algorithm,Size,Order,Time (ms),Swaps,Comparisons\n");
+                    /*csvWriter.write("Algorithm,Size,Order,Time (ms),Swaps,Comparisons\n");*/
+                    csvWriter.write("Algorithm,Size,Order,Time (ms)\n");
                 }
                 testSortAlgorithm(new InsertionSort(), "InsertionSort", csvWriter);
                 testSortAlgorithm(new SelectionSort(), "SelectionSort", csvWriter);
