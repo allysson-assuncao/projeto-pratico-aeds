@@ -75,6 +75,40 @@ class SelectionSort implements SortAlgorithm {
     }
 }
 
+class BubbleSort implements SortAlgorithm {
+    private int swapCount = 0;
+    private int comparisonCount = 0;
+
+    public void sort(int[] array) {
+        swapCount = 0;
+        comparisonCount = 0;
+        int n = array.length;
+        boolean swapped;
+        for (int i = 0; i < n - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < n - i - 1; j++) {
+                comparisonCount++;
+                if (array[j] > array[j + 1]) {
+                    int temp = array[j];
+                    array[j] = array[j + 1];
+                    array[j + 1] = temp;
+                    swapped = true;
+                    swapCount++;
+                }
+            }
+            if (!swapped) break;
+        }
+    }
+
+    public int getSwapCount() {
+        return swapCount;
+    }
+
+    public int getComparisonCount() {
+        return comparisonCount;
+    }
+}
+
 class MergeSort implements SortAlgorithm {
     private int swapCount = 0;
     private int comparisonCount = 0;
@@ -125,40 +159,6 @@ class MergeSort implements SortAlgorithm {
         for (auxIndex = 0; auxIndex < auxArray.length; auxIndex++) {
             array[left + auxIndex] = auxArray[auxIndex];
             swapCount++;
-        }
-    }
-
-    public int getSwapCount() {
-        return swapCount;
-    }
-
-    public int getComparisonCount() {
-        return comparisonCount;
-    }
-}
-
-class BubbleSort implements SortAlgorithm {
-    private int swapCount = 0;
-    private int comparisonCount = 0;
-
-    public void sort(int[] array) {
-        swapCount = 0;
-        comparisonCount = 0;
-        int n = array.length;
-        boolean swapped;
-        for (int i = 0; i < n - 1; i++) {
-            swapped = false;
-            for (int j = 0; j < n - i - 1; j++) {
-                comparisonCount++;
-                if (array[j] > array[j + 1]) {
-                    int temp = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = temp;
-                    swapped = true;
-                    swapCount++;
-                }
-            }
-            if (!swapped) break;
         }
     }
 
@@ -247,27 +247,12 @@ class QuickSort implements SortAlgorithm {
 
 public class Main {
 
-    private static final int MAX_TEST_SECTIONS = 5;
     private static final int TEST_RUNS = 5;
 
     public static void testSortAlgorithm(SortAlgorithm algorithm, String algorithmName, FileWriter csvWriter) throws IOException {
-        int[] sizes = {100, 500, 1000, 5000, 20000, 50000/*, 100000, 500000*/};
+        int[] sizes = {100, 500, 1000, 5000, 20000/*, 50000, 100000, 500000*/};
         String[] orders = {"random", "ascending", "descending"};
         long seed = 42;
-
-        // Calculate the maximum width for each column
-        int maxAlgorithmNameLength = Arrays.stream(new String[]{"Algorithm", algorithmName}).mapToInt(String::length).max().orElse(0);
-        int maxSizeLength = Arrays.stream(new String[]{"Size", String.valueOf(sizes[sizes.length - 1])}).mapToInt(String::length).max().orElse(0);
-        int maxOrderLength = Arrays.stream(new String[]{"Order", "descending"}).mapToInt(String::length).max().orElse(0);
-        int maxDurationLength = Arrays.stream(new String[]{"Time (ms)", "10000000.000"}).mapToInt(String::length).max().orElse(0);
-
-        // Print the header
-        /*System.out.printf("%-" + maxAlgorithmNameLength + "s | %-" + maxSizeLength + "s | %-" + maxOrderLength + "s | %-" + maxDurationLength + "s | Swaps | Comparisons%n",
-                "Algorithm", "Size", "Order", "Time (ms)");*/
-        System.out.printf("%-" + maxAlgorithmNameLength + "s | %-" + maxSizeLength + "s | %-" + maxOrderLength + "s | %-" + maxDurationLength + "s%n",
-                "Algorithm", "Size", "Order", "Time (ms)");
-        System.out.println("-".repeat(maxAlgorithmNameLength + maxSizeLength + maxOrderLength + maxDurationLength + 20));
-
         for (int size : sizes) {
             for (String order : orders) {
                 double totalDuration = 0;
@@ -288,41 +273,25 @@ public class Main {
                 int avgSwaps = totalSwaps / TEST_RUNS;
                 int avgComparisons = totalComparisons / TEST_RUNS;
 
-                /*csvWriter.append(String.format("%s,%d,%s,%.3f,%d,%d\n", algorithmName, size, order, avgDuration, avgSwaps, avgComparisons));
-                System.out.printf("%-" + maxAlgorithmNameLength + "s | %-" + maxSizeLength + "d | %-" + maxOrderLength + "s | %-" + maxDurationLength + ".3f | %d | %d%n",
-                        algorithmName, size, order, avgDuration, avgSwaps, avgComparisons);*/
-                csvWriter.append(String.format("%s,%d,%s,%.3f\n", algorithmName, size, order, avgDuration));
-                System.out.printf("%-" + maxAlgorithmNameLength + "s | %-" + maxSizeLength + "d | %-" + maxOrderLength + "s | %-" + maxDurationLength + ".3f%n",
-                        algorithmName, size, order, avgDuration);
+                csvWriter.append(String.format("%s,%d,%s,%.3f,%d,%d\n", algorithmName, size, order, avgDuration, avgSwaps, avgComparisons));
             }
         }
-        System.out.println("\n\n");
     }
 
     public static void main(String[] args) {
         try {
             File csvFile = new File("sort_results.csv");
-            boolean append = csvFile.exists() && countTestSections(csvFile) < MAX_TEST_SECTIONS;
 
-            try (FileWriter csvWriter = new FileWriter(csvFile, append)) {
-                if (!append) {
-                    /*csvWriter.write("Algorithm,Size,Order,Time (ms),Swaps,Comparisons\n");*/
-                    csvWriter.write("Algorithm,Size,Order,Time (ms)\n");
-                }
+            try (FileWriter csvWriter = new FileWriter(csvFile)) {
                 testSortAlgorithm(new InsertionSort(), "InsertionSort", csvWriter);
                 testSortAlgorithm(new SelectionSort(), "SelectionSort", csvWriter);
-                testSortAlgorithm(new MergeSort(), "MergeSort", csvWriter);
-                testSortAlgorithm(new BubbleSort(), "BubbleSort", csvWriter);
+                testSortAlgorithm(new MergeSort(), "BubbleSort", csvWriter);
+                testSortAlgorithm(new BubbleSort(), "MergeSort", csvWriter);
                 testSortAlgorithm(new QuickSort(), "QuickSort", csvWriter);
+                System.out.println("Tests ended");
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private static int countTestSections(File csvFile) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
-            return (int) reader.lines().filter(line -> line.startsWith("Algorithm")).count();
         }
     }
 
