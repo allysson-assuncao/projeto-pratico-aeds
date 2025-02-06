@@ -246,7 +246,6 @@ class QuickSort implements SortAlgorithm {
 
 interface SortAlgorithm {
     void sort(int[] array);
-
 }
 
 class InsertionSort implements SortAlgorithm {
@@ -406,19 +405,19 @@ class QuickSort implements SortAlgorithm {
     }
 }
 
-public class Main {
+/*public class Main {
 
     private static final int TEST_RUNS = 5;
 
     public static void testSortAlgorithm(SortAlgorithm algorithm, String algorithmName, FileWriter csvWriter) throws IOException {
-        int[] sizes = {100, 500, 1000, 5000, 20000/*, 50000, 100000, 500000*/};
+        int[] sizes = {100, 500, 1000, 5000, 20000*//*, 50000, 100000, 500000*//*};
         String[] orders = {"random", "ascending", "descending"};
         long seed = 42;
         for (int size : sizes) {
             for (String order : orders) {
                 double totalDuration = 0;
-                /*int totalSwaps = 0;
-                int totalComparisons = 0;*/
+                *//*int totalSwaps = 0;
+                int totalComparisons = 0;*//*
 
                 for (int run = 0; run < TEST_RUNS; run++) {
                     int[] array = generateArray(size, order, seed + run);
@@ -426,13 +425,13 @@ public class Main {
                     algorithm.sort(array);
                     long endTime = System.nanoTime();
                     totalDuration += (endTime - startTime) / 1_000_000.0;
-                    /*totalSwaps += algorithm.getSwapCount();
-                    totalComparisons += algorithm.getComparisonCount();*/
+                    *//*totalSwaps += algorithm.getSwapCount();
+                    totalComparisons += algorithm.getComparisonCount();*//*
                 }
 
                 double avgDuration = totalDuration / TEST_RUNS;
-                /*int avgSwaps = totalSwaps / TEST_RUNS;
-                int avgComparisons = totalComparisons / TEST_RUNS;*/
+                *//*int avgSwaps = totalSwaps / TEST_RUNS;
+                int avgComparisons = totalComparisons / TEST_RUNS;*//*
 
                 csvWriter.append(String.format("%s,%d,%s,%.3f\n", algorithmName, size, order, avgDuration));
             }
@@ -475,7 +474,7 @@ public class Main {
         return array;
     }
 
-    /*public static int[] generateArray(int size, String order, long seed) {
+    *//*public static int[] generateArray(int size, String order, long seed) {
         Random random = new Random(seed);
         int[] array = new int[size];
         for (int i = 0; i < size; i++) {
@@ -492,5 +491,78 @@ public class Main {
             }
         }
         return array;
-    }*/
+    }*//*
+}*/
+
+public class Main {
+    public static void main(String[] args) {
+        int[] sizes = {100, 500, 1000, 5000, 20000/*, 50000, 100000, 500000*/};
+        String[] orders = {"ascending", "descending", "random"};
+        SortAlgorithm[] algorithms = {
+            new InsertionSort(),
+            new SelectionSort(),
+            new BubbleSort(),
+            new MergeSort(),
+            new QuickSort()
+        };
+        String[] algorithmNames = {
+            "InsertionSort",
+            "SelectionSort",
+            "BubbleSort",
+            "MergeSort",
+            "QuickSort"
+        };
+        int numTests = 5;
+
+        try (FileWriter writer = new FileWriter("results.csv")) {
+            writer.write("Algoritmo,Tamanho,Ordem,TempoMedio\n");
+
+            for (int i = 0; i < algorithms.length; i++) {
+                SortAlgorithm algorithm = algorithms[i];
+                String algorithmName = algorithmNames[i];
+
+                for (int size : sizes) {
+                    for (String order : orders) {
+                        long totalTime = 0;
+
+                        for (int test = 0; test < numTests; test++) {
+                            int[] array = generateArray(size, order);
+                            long startTime = System.nanoTime();
+                            algorithm.sort(array);
+                            long endTime = System.nanoTime();
+                            totalTime += (endTime - startTime);
+                        }
+
+                        double averageTime = (totalTime / numTests) / 1e9; // Converter para segundos
+                        writer.write(algorithmName + "," + size + "," + order + "," + averageTime + "\n");
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static int[] generateArray(int size, String order) {
+        int[] array = new int[size];
+        switch (order) {
+            case "ascending":
+                for (int i = 0; i < size; i++) {
+                    array[i] = i + 1;
+                }
+                break;
+            case "descending":
+                for (int i = 0; i < size; i++) {
+                    array[i] = size - i;
+                }
+                break;
+            case "random":
+                Random random = new Random();
+                for (int i = 0; i < size; i++) {
+                    array[i] = random.nextInt(size) + 1;
+                }
+                break;
+        }
+        return array;
+    }
 }
