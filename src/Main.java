@@ -533,7 +533,7 @@ public class Main {
                             totalTime += (endTime - startTime);
                         }
 
-                        double averageTime = (totalTime / numTests) / 1e9; // Converter para segundos
+                        double averageTime = (totalTime / numTests) / 1e6;
                         writer.write(algorithmName + "," + size + "," + order + "," + averageTime + "\n");
                     }
                 }
