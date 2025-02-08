@@ -140,7 +140,7 @@ public class OtherAlgorithms {
         };
         int numTests = 2;
 
-        try (FileWriter writer = new FileWriter("results.csv")) {
+        try (FileWriter writer = new FileWriter("other_results.csv")) {
             writer.write("Algorithm,Size,TimeMillis\n");
 
             for (int i = 0; i < algorithms.length; i++) {
@@ -171,7 +171,7 @@ public class OtherAlgorithms {
         int[] array = new int[size];
         Random random = new Random();
         for (int i = 0; i < size; i++) {
-            array[i] = random.nextInt(size); // Números de 0 a (size - 1)
+            array[i] = random.nextInt(size);
         }
         return array;
     }

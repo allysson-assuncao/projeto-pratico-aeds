@@ -496,7 +496,7 @@ class QuickSort implements SortAlgorithm {
 
 public class Main {
     public static void main(String[] args) {
-        int[] sizes = {100, 500, 1000, 5000, 20000/*, 50000, 100000, 500000*/};
+        int[] sizes = {100, 500, 1000, 5000, 20000, 50000, 100000, 500000};
         String[] orders = {"ascending", "descending", "random"};
         SortAlgorithm[] algorithms = {
             new InsertionSort(),
@@ -515,7 +515,7 @@ public class Main {
         int numTests = 5;
 
         try (FileWriter writer = new FileWriter("results.csv")) {
-            writer.write("Algoritmo,Tamanho,Ordem,TempoMedio\n");
+            writer.write("Algorithm,Size,Order,Time\n");
 
             for (int i = 0; i < algorithms.length; i++) {
                 SortAlgorithm algorithm = algorithms[i];
@@ -530,14 +530,16 @@ public class Main {
                             long startTime = System.nanoTime();
                             algorithm.sort(array);
                             long endTime = System.nanoTime();
-                            totalTime += (endTime - startTime) / 1_000_000;
+                            totalTime += (endTime - startTime);
                         }
 
-                        double averageTime = (totalTime / numTests);
+                        double averageTime = (totalTime / numTests) / 1_000_000.0;
                         writer.write(algorithmName + "," + size + "," + order + "," + averageTime + "\n");
+                        System.out.println(algorithmName + "," + size + "," + order + "," + averageTime + " ended");
                     }
                 }
             }
+            System.out.println("\n\nTests ended!");
         } catch (IOException e) {
             e.printStackTrace();
         }
