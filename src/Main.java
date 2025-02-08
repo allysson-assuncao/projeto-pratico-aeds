@@ -530,10 +530,10 @@ public class Main {
                             long startTime = System.nanoTime();
                             algorithm.sort(array);
                             long endTime = System.nanoTime();
-                            totalTime += (endTime - startTime);
+                            totalTime += (endTime - startTime) / 1_000_000;
                         }
 
-                        double averageTime = (totalTime / numTests) / 1e6;
+                        double averageTime = (totalTime / numTests);
                         writer.write(algorithmName + "," + size + "," + order + "," + averageTime + "\n");
                     }
                 }
