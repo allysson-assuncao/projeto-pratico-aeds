@@ -149,7 +149,7 @@ class QuickSort implements SortAlgorithm {
 
 public class Main {
     public static void main(String[] args) {
-        int[] sizes = {100, 500, 1000, 5000, 20000, 50000/*, 100000, 500000*/};
+        int[] sizes = {100, 500, 1000, 5000, 20000, 50000, 100000, 500000};
         String[] orders = {"ascending", "descending", "random"};
         SortAlgorithm[] algorithms = {
             new InsertionSort(),
