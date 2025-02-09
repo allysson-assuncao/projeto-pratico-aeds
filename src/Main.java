@@ -165,9 +165,9 @@ public class Main {
             "MergeSort",
             "QuickSort"
         };
-        int numTests = 5;
+        int numTests = 1;
 
-        try (FileWriter writer = new FileWriter("results.csv")) {
+        try (FileWriter writer = new FileWriter("final_results.csv")) {
             writer.write("Algorithm,Size,Order,Time\n");
 
             for (int i = 0; i < algorithms.length; i++) {
