@@ -23,16 +23,34 @@ class QuickSort implements SortAlgorithm {
     }
 
     private int partition(int[] array, int low, int high) {
+        int pivotIndex = medianOfThree(array, low, high);
+        swap(array, pivotIndex, high);
         int pivot = array[high];
         int i = low - 1;
+
         for (int j = low; j < high; j++) {
             if (array[j] < pivot) {
                 i++;
                 swap(array, i, j);
             }
         }
+
         swap(array, i + 1, high);
         return i + 1;
+    }
+
+    private int medianOfThree(int[] array, int low, int high) {
+        int mid = (low + high) / 2;
+        if (array[low] > array[mid]) {
+            swap(array, low, mid);
+        }
+        if (array[low] > array[high]) {
+            swap(array, low, high);
+        }
+        if (array[mid] > array[high]) {
+            swap(array, mid, high);
+        }
+        return mid;
     }
 
     private void swap(int[] array, int i, int j) {
@@ -130,48 +148,72 @@ class BucketSort implements SortAlgorithm {
 
 public class OtherAlgorithms {
     public static void main(String[] args) {
-        int[] sizes = {1000, 10000, 100000, 1000000};
-        String[] algorithmNames = {"QuickSort", "CountingSort", "RadixSort", "BucketSort"};
+        int[] sizes = {100, 500, 1000, 5000, 20000, 50000, 100000, 500000};
+        String[] orders = {"ascending", "descending", "random"};
         SortAlgorithm[] algorithms = {
-            new QuickSort(),
-            new CountingSort(),
-            new RadixSort(),
-            new BucketSort()
+                new QuickSort(),
+                new CountingSort(),
+                new RadixSort(),
+                new BucketSort(),
         };
-        int numTests = 2;
+        String[] algorithmNames = {
+                "QuickSort",
+                "CountingSort",
+                "RadixSort",
+                "BucketSort"
+        };
+        int numTests = 1;
 
         try (FileWriter writer = new FileWriter("other_results.csv")) {
-            writer.write("Algorithm,Size,TimeMillis\n");
+            writer.write("Algorithm,Size,Order,Time\n");
 
             for (int i = 0; i < algorithms.length; i++) {
                 SortAlgorithm algorithm = algorithms[i];
                 String algorithmName = algorithmNames[i];
 
                 for (int size : sizes) {
-                    long totalTime = 0;
+                    for (String order : orders) {
+                        long totalTime = 0;
 
-                    for (int test = 0; test < numTests; test++) {
-                        int[] array = generateArray(size);
-                        long startTime = System.nanoTime();
-                        algorithm.sort(array);
-                        long endTime = System.nanoTime();
-                        totalTime += (endTime - startTime) / 1_000_000;
+                        for (int test = 0; test < numTests; test++) {
+                            int[] array = generateArray(size, order);
+                            long startTime = System.nanoTime();
+                            algorithm.sort(array);
+                            long endTime = System.nanoTime();
+                            totalTime += (endTime - startTime);
+                        }
+
+                        double averageTime = (totalTime / numTests) / 1_000_000.0;
+                        writer.write(algorithmName + "," + size + "," + order + "," + averageTime + "\n");
+                        System.out.println(algorithmName + "," + size + "," + order + "," + averageTime + " ended");
                     }
-
-                    double averageTime = totalTime / numTests;
-                    writer.write(algorithmName + "," + size + "," + averageTime + "\n");
                 }
             }
+            System.out.println("\n\nTests ended!");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static int[] generateArray(int size) {
+    private static int[] generateArray(int size, String order) {
         int[] array = new int[size];
-        Random random = new Random();
-        for (int i = 0; i < size; i++) {
-            array[i] = random.nextInt(size);
+        switch (order) {
+            case "ascending":
+                for (int i = 0; i < size; i++) {
+                    array[i] = i + 1;
+                }
+                break;
+            case "descending":
+                for (int i = 0; i < size; i++) {
+                    array[i] = size - i;
+                }
+                break;
+            case "random":
+                Random random = new Random();
+                for (int i = 0; i < size; i++) {
+                    array[i] = random.nextInt(size) + 1;
+                }
+                break;
         }
         return array;
     }

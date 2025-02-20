@@ -152,18 +152,18 @@ public class Main {
         int[] sizes = {100, 500, 1000, 5000, 20000, 50000, 100000, 500000};
         String[] orders = {"ascending", "descending", "random"};
         SortAlgorithm[] algorithms = {
-            new InsertionSort(),
-            new SelectionSort(),
-            new BubbleSort(),
-            new MergeSort(),
-            new QuickSort()
+                new InsertionSort(),
+                new SelectionSort(),
+                new BubbleSort(),
+                new MergeSort(),
+                new QuickSort()
         };
         String[] algorithmNames = {
-            "InsertionSort",
-            "SelectionSort",
-            "BubbleSort",
-            "MergeSort",
-            "QuickSort"
+                "InsertionSort",
+                "SelectionSort",
+                "BubbleSort",
+                "MergeSort",
+                "QuickSort"
         };
         int numTests = 1;
 
